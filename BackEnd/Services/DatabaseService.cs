@@ -11,7 +11,6 @@ namespace BackEnd.Services
             using var db = new LiteDatabase(_dbPath);
             var col = db.GetCollection<ClipItem>("clips");
             col.Insert(clip);
-            col.EnsureIndex(x => x.Content); 
         }
         public IEnumerable<ClipItem> GetAllClipsOnCreationOrder()
         {
@@ -20,6 +19,12 @@ namespace BackEnd.Services
             return col.Query()
                       .OrderByDescending(x => x.CreatedAt)
                       .ToList();
+        }
+        public void DeleteClip(string id)
+        {
+            using var db = new LiteDatabase(_dbPath);
+            var col = db.GetCollection<ClipItem>("clips");
+            col.Delete(id);
         }
     }
 }

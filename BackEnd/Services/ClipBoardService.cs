@@ -41,5 +41,11 @@ namespace BackEnd.Services
                 await Task.Delay(500, cancellationToken);
             }
         }
+        //for when you copy from the app
+        public async Task CopyToClipboardSilentlyAsync(string text)
+        {
+            _lastCopiedText = text; 
+            await ClipboardService.SetTextAsync(text);
+        }
     }
 }

@@ -2,7 +2,7 @@ import { useEffect, useCallback } from 'react';
 
 export function useIPC(onMessageReceived) {
   useEffect(() => {
-    const handleMessage = (msg) => {
+    window.handleIpcMessage = (msg) => {
       const rawData = typeof msg === 'string' ? msg : msg.data;
       try {
         const parsedData = JSON.parse(rawData);
@@ -10,27 +10,28 @@ export function useIPC(onMessageReceived) {
           onMessageReceived(parsedData);
         }
       } catch (e) {
-        console.error("Error decoding the JSON from C#:", e);
+        console.error("Errore nel decodificare il JSON da C#:", e);
       }
     };
-    if (window.external && typeof window.external.receiveMessage === 'function') {
-      window.external.receiveMessage(handleMessage);
-    } else if (window.chrome && window.chrome.webview) {
-      window.chrome.webview.addEventListener('message', handleMessage);
+    if (!window.ipcListenerRegistered) {
+      if (window.external && typeof window.external.receiveMessage === 'function') {
+        window.external.receiveMessage((msg) => {
+          if (typeof window.handleIpcMessage === 'function') {
+            window.handleIpcMessage(msg);
+          }
+        });
+      }
+      window.ipcListenerRegistered = true;
     }
-    return () => {
-      if (window.chrome && window.chrome.webview) {
-        window.chrome.webview.removeEventListener('message', handleMessage);
-      }
-    };
+
   }, [onMessageReceived]);
+
   const sendCommand = useCallback((command, payload) => {
     const message = JSON.stringify({ command, payload });
     if (window.external && window.external.sendMessage) {
       window.external.sendMessage(message);
-    } else {
-      console.warn("IPC non disponibile. Inviato:", message);
     }
   }, []);
+
   return { sendCommand };
 }
