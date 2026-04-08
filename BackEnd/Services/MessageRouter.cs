@@ -6,17 +6,23 @@ namespace BackEnd.Services
     public class MessageRouter
     {
         private readonly PhotinoWindow _window;
-        private readonly DatabaseService _dbService;
-        private readonly ClipboardMonitorService _clipboardMonitorService;
-        public MessageRouter(PhotinoWindow window, DatabaseService dbService, ClipboardMonitorService monitorService)
+        private readonly Dictionary<string,Func<JsonElement, Task>> _commandHandlers;
+
+        public MessageRouter(PhotinoWindow window,ClipRepository dbService,ClipboardMonitorService monitorService)
         {
             _window = window;
-            _dbService = dbService;
-            _clipboardMonitorService = monitorService;
-            monitorService.OnClipCopied += (newClip) => 
+            var clipController = new ClipController(dbService, monitorService, SendToReact);
+            _commandHandlers = new Dictionary<string, Func<JsonElement, Task>>
             {
-                SendToReact("NEW_CLIP", newClip);
+                { "GET_ALL_CLIPS", clipController.GetAllClips },
+                { "DELETE_CLIP", clipController.DeleteClip },
+                { "COPY_CLIP", clipController.CopyClip },
+                { "TOGGLE_PIN", clipController.TogglePin },
+                { "UPDATE_CLIP_CONTENT", clipController.UpdateClipContent }
             };
+
+            // Mantieniamo l'ascolto per i nuovi clip
+            monitorService.OnClipCopied += (newClip) => SendToReact("NEW_CLIP", newClip);
         }
 
         public void RouteMessage(string rawJson)
@@ -26,31 +32,9 @@ namespace BackEnd.Services
                 try
                 {
                     using var doc = JsonDocument.Parse(rawJson);
-                    var command = doc.RootElement.GetProperty("command").GetString();
-                    switch (command)
-                    {
-                        case "GET_ALL_CLIPS":
-                            var allClips = _dbService.GetAllClipsOnCreationOrder();
-                            SendToReact("ALL_CLIPS_LOADED", allClips);
-                            break;
-                        case "DELETE_CLIP":
-                            // React ci invierà l'ID come stringa nel payload
-                            var idToDelete = doc.RootElement.GetProperty("payload").GetString();
-                            if (idToDelete != null)
-                            {
-                                _dbService.DeleteClip(idToDelete);
-                            }
-                            break;
-
-                        case "COPY_CLIP":
-                            // React ci invierà il testo da copiare
-                            var textToCopy = doc.RootElement.GetProperty("payload").GetString();
-                            if (textToCopy != null)
-                            {
-                                await _clipboardMonitorService.CopyToClipboardSilentlyAsync(textToCopy);
-                            }
-                            break;
-                    }
+                    var root = doc.RootElement;
+                    var command = root.GetProperty("command").GetString();
+                    if (!string.IsNullOrEmpty(command) && _commandHandlers.TryGetValue(command, out var handler)) await handler(root);
                 }
                 catch (Exception ex)
                 {
@@ -58,7 +42,6 @@ namespace BackEnd.Services
                 }
             });
         }
-
         private void SendToReact(string type, object data)
         {
             var response = JsonSerializer.Serialize(new { type = type, data = data });

@@ -8,6 +8,7 @@ namespace BackEnd.Models
         public string Content { get; set; } = string.Empty;
         public string Type { get; set; } = "Text";
         public string SourceApp { get; set; } = "Unknown";
+        public bool IsPinned { get; set; } = false;
         public List<string> Tags { get; set; } = new List<string>();
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }

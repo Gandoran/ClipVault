@@ -5,12 +5,12 @@ namespace BackEnd.Services
 {
     public class ClipboardMonitorService
     {
-        private readonly DatabaseService _dbService;
+        private readonly ClipRepository _repository;
         private string _lastCopiedText = string.Empty;
         public event Action<ClipItem>? OnClipCopied;
-        public ClipboardMonitorService(DatabaseService dbService)
+        public ClipboardMonitorService(ClipRepository repository)
         {
-            _dbService = dbService;
+            _repository = repository;
         }
         public async Task StartMonitoringAsync(CancellationToken cancellationToken)
         {
@@ -30,7 +30,7 @@ namespace BackEnd.Services
                             Type = "Text",
                             SourceApp = sourceApp
                         };
-                        _dbService.InsertClip(newClip);
+                        _repository.Insert(newClip);
                         OnClipCopied?.Invoke(newClip);
                     }
                 }

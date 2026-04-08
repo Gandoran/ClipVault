@@ -13,9 +13,10 @@ namespace BackEnd
                 .SetUseOsDefaultSize(false)
                 .SetSize(400, 500)
                 .Center();
-            var dbService = new DatabaseService();
-            var clipboardMonitor = new ClipboardMonitorService(dbService);
-            var router = new MessageRouter(window, dbService, clipboardMonitor);
+            using var dbContext = new LiteDbContext();
+            var clipRepository = new ClipRepository(dbContext);
+            var clipboardMonitor = new ClipboardMonitorService(clipRepository);
+            var router = new MessageRouter(window, clipRepository, clipboardMonitor);
             var cts = new CancellationTokenSource();
             _ = clipboardMonitor.StartMonitoringAsync(cts.Token);
             window.RegisterWebMessageReceivedHandler((object? sender, string message) =>
