@@ -19,8 +19,9 @@ const [clips, setClips] = useState([]);
     setClips((prevClips) => prevClips.filter(clip => clip.Id !== id));
   };
 
-  const handleCopy = (content) => {
-    sendCommand("COPY_CLIP", content);
+  const handleCopy = (content,type="Text") => {
+    console.log("Copia in corso, tipo riconosciuto:", type);
+    sendCommand("COPY_CLIP", {content,type});
   };
 
   const handleTogglePin = (id) => {

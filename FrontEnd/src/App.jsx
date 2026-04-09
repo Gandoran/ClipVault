@@ -30,11 +30,7 @@ function App() {
         )}
       </div>
       {selectedClip && (
-        <ClipModal 
-          clip={selectedClip} 
-          onClose={() => setSelectedClip(null)} 
-          onCopy={handleCopy}
-        />
+        <ClipModal clip={selectedClip} onClose={() => setSelectedClip(null)} onCopy={handleCopy}/>
       )}
     </div>
   );

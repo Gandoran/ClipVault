@@ -15,6 +15,13 @@ export function CardEditor ({ clip, onUpdateContent }:any) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSave(); }
     if (e.key === 'Escape') { setTempText(clip.Content); setIsEditing(false); }
   };
+  if (clip.Type === 'Image') {
+    return (
+      <div style={{ maxHeight: '120px', overflow: 'hidden', borderRadius: '4px', backgroundColor: '#111', display: 'flex', justifyContent: 'center' }}>
+        <img src={clip.Content} alt="Cattura" style={{ width: '100%', objectFit: 'cover', opacity: 0.9 }} />
+      </div>
+    );
+  }
   return (
     <div onDoubleClick={() => setIsEditing(true)}>
       {isEditing ? (

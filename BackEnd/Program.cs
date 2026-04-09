@@ -15,7 +15,8 @@ namespace BackEnd
                 .Center();
             using var dbContext = new LiteDbContext();
             var clipRepository = new ClipRepository(dbContext);
-            var clipboardMonitor = new ClipboardMonitorService(clipRepository);
+            var osClipboard = new WindowsClipboardService();
+            var clipboardMonitor = new ClipboardMonitorService(clipRepository, osClipboard);
             var router = new MessageRouter(window, clipRepository, clipboardMonitor);
             var cts = new CancellationTokenSource();
             _ = clipboardMonitor.StartMonitoringAsync(cts.Token);

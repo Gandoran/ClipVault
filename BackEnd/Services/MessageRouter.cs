@@ -20,8 +20,6 @@ namespace BackEnd.Services
                 { "TOGGLE_PIN", clipController.TogglePin },
                 { "UPDATE_CLIP_CONTENT", clipController.UpdateClipContent }
             };
-
-            // Mantieniamo l'ascolto per i nuovi clip
             monitorService.OnClipCopied += (newClip) => SendToReact("NEW_CLIP", newClip);
         }
 

@@ -9,7 +9,7 @@ export function CardActions ({ clip, isHovered, onCopy, onDelete, onExpand }:any
     <button onClick={() => onExpand(clip)} style={{ background: 'transparent', color: '#4caf50', border: 'none', cursor: 'pointer', fontSize: '13px', padding: 0 }}>
       🔍 Espandi
     </button>
-    <button onClick={() => {onCopy(clip.Content),toast.success("Copiato negli appunti!")}} style={{ background: 'transparent', color: '#007acc', border: 'none', cursor: 'pointer', fontSize: '13px', padding: 0 }}>
+    <button onClick={() => {onCopy(clip.Content,clip.Type),toast.success("Copiato negli appunti!")}} style={{ background: 'transparent', color: '#007acc', border: 'none', cursor: 'pointer', fontSize: '13px', padding: 0 }}>
       📋 Copia
     </button>
     <button onClick={() => onDelete(clip.Id)} style={{ background: 'transparent', color: '#d32f2f', border: 'none', cursor: 'pointer', fontSize: '13px', padding: 0 }}>

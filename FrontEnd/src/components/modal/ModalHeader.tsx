@@ -8,8 +8,9 @@ export function ModalHeader ({ clip, onClose, onCopy }:any) {
     </span>
     <div style={{ display: 'flex', gap: '10px' }}>
       <button 
-        onClick={() => {onCopy(clip.Content); toast.success("Copiato negli appunti!")}} 
-        style={{ background: '#007acc', color: 'white', border: 'none', borderRadius: '4px', padding: '5px 15px', cursor: 'pointer' }}>📋 Copia Tutto
+        onClick={() => {onCopy(clip.Content,clip.Type); toast.success("Copiato negli appunti!")}} 
+        style={{ background: '#007acc', color: 'white', border: 'none', borderRadius: '4px', padding: '5px 15px', cursor: 'pointer' }}>
+        📋 {clip.Type === 'Image' ? "Copia Immagine" : "Copia Tutto"}
       </button>
       <button onClick={onClose} style={{ background: 'transparent', color: '#aaa', border: 'none', cursor: 'pointer', fontSize: '20px' }}>
         &times;

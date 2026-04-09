@@ -25,10 +25,16 @@ namespace BackEnd.Services
             if (idToDelete != null) _repository.Delete(idToDelete);
             return Task.CompletedTask;
         }
-        public async Task CopyClip(JsonElement root)
+        public Task CopyClip(JsonElement root)
         {
-            var textToCopy = root.GetProperty("payload").GetString();
-            if (textToCopy != null) await _monitorService.CopyToClipboardSilentlyAsync(textToCopy);
+            var content = root.GetProperty("payload").GetProperty("content").GetString();
+            var type = root.GetProperty("payload").GetProperty("type").GetString();
+            
+            if (content != null && type != null) 
+            {
+                _monitorService.CopyToClipboardSilently(content, type);
+            }
+            return Task.CompletedTask;
         }
         public Task TogglePin(JsonElement root)
         {

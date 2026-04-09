@@ -9,7 +9,6 @@ export function ClipModal({ clip, onClose, onCopy }:any) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
   if (!clip) return null;
-
   return (
     <div 
       onClick={onClose}
@@ -23,7 +22,7 @@ export function ClipModal({ clip, onClose, onCopy }:any) {
           display: 'flex', flexDirection: 'column', border: '1px solid #333'
         }}>
         <ModalHeader clip={clip} onClose={onClose} onCopy={onCopy} />
-        <ModalBody content={clip.Content} />
+        <ModalBody clip={clip} />
       </div>
     </div>
   );

@@ -1,4 +1,3 @@
-using TextCopy;
 using BackEnd.Models;
 
 namespace BackEnd.Services
@@ -6,46 +5,48 @@ namespace BackEnd.Services
     public class ClipboardMonitorService
     {
         private readonly ClipRepository _repository;
-        private string _lastCopiedText = string.Empty;
+        private readonly IOsClipboardService _clipboardService;
+        private string _lastCopiedData = string.Empty;
         public event Action<ClipItem>? OnClipCopied;
-        public ClipboardMonitorService(ClipRepository repository)
+
+        public ClipboardMonitorService(ClipRepository repository, IOsClipboardService clipboardService)
         {
             _repository = repository;
+            _clipboardService = clipboardService;
         }
+
         public async Task StartMonitoringAsync(CancellationToken cancellationToken)
         {
-            _lastCopiedText = await ClipboardService.GetTextAsync() ?? string.Empty;
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    string currentText = await ClipboardService.GetTextAsync() ?? string.Empty;
-                    if (!string.IsNullOrWhiteSpace(currentText) && currentText != _lastCopiedText)
+                    string currentText = _clipboardService.GetText();
+                    if (!string.IsNullOrWhiteSpace(currentText) && currentText != _lastCopiedData) SaveAndNotify(currentText, "Text");
+                    else
                     {
-                        _lastCopiedText = currentText;
-                        string sourceApp = WindowTracker.GetActiveProcessName();
-                        var newClip = new ClipItem
-                        {
-                            Content = currentText,
-                            Type = "Text",
-                            SourceApp = sourceApp
-                        };
-                        _repository.Insert(newClip);
-                        OnClipCopied?.Invoke(newClip);
+                        string currentImage = _clipboardService.GetImageAsBase64();
+                        if (!string.IsNullOrWhiteSpace(currentImage) && currentImage != _lastCopiedData) SaveAndNotify(currentImage, "Image");
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[Error Monitor]: {ex.Message}");
-                }
+                catch { }
                 await Task.Delay(500, cancellationToken);
             }
         }
-        //for when you copy from the app
-        public async Task CopyToClipboardSilentlyAsync(string text)
+        private void SaveAndNotify(string content, string type)
         {
-            _lastCopiedText = text; 
-            await ClipboardService.SetTextAsync(text);
+            _lastCopiedData = content;
+            string sourceApp = WindowTracker.GetActiveProcessName();
+            var newClip = new ClipItem { Content = content, Type = type, SourceApp = sourceApp };
+            _repository.Insert(newClip);
+            OnClipCopied?.Invoke(newClip);
+        }
+        //for when you copy from the app
+        public void CopyToClipboardSilently(string content, string type)
+        {
+            _lastCopiedData = content;
+            if (type == "Text") _clipboardService.SetText(content);
+            else if (type == "Image") _clipboardService.SetImageFromBase64(content);
         }
     }
 }
