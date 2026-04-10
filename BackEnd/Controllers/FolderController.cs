@@ -1,17 +1,20 @@
 using System.Text.Json;
-using BackEnd.Models;
+using BackEnd.Repositories;
+using BackEnd.Services;
 
-namespace BackEnd.Services
+namespace BackEnd.Controllers
 {
     public class FolderController
     {
         private readonly FolderRepository _folderRepo;
         private readonly ClipRepository _clipRepo;
+        private readonly FolderManager _folderManager;
         private readonly Action<string, object> _sendToReact;
-        public FolderController(FolderRepository folderRepo, ClipRepository clipRepo, Action<string, object> sendToReact)
+        public FolderController(FolderRepository folderRepo, ClipRepository clipRepo, FolderManager folderManager, Action<string,object> sendToReact)
         {
-            _clipRepo = clipRepo;
             _folderRepo = folderRepo;
+            _clipRepo = clipRepo;
+            _folderManager = folderManager;
             _sendToReact = sendToReact;
         }
         public Task GetAllFolders(JsonElement root)
@@ -29,12 +32,11 @@ namespace BackEnd.Services
         public Task DeleteFolder(JsonElement root)
         {
             var id = root.GetProperty("payload").GetString();
-            if (id!=null)
+            if (id != null)
             {
-                _clipRepo.GetAll(id).ToList().ForEach(item => _clipRepo.Delete(item.Id));
-                _folderRepo.Delete(id);
+                _folderManager.DeleteFolderCascading(id);
                 _sendToReact("ALL_FOLDERS_LOADED", _folderRepo.GetAll());
-                _sendToReact("All_CLIPS_LOADED", _clipRepo.GetAll());
+                _sendToReact("ALL_CLIPS_LOADED", _clipRepo.GetAll(null));
             }
             return Task.CompletedTask;
         }

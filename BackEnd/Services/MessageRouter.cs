@@ -1,3 +1,6 @@
+using BackEnd.Controllers;
+using BackEnd.Models;
+using BackEnd.Repositories;
 using Photino.NET;
 using System.Text.Json;
 
@@ -7,12 +10,11 @@ namespace BackEnd.Services
     {
         private readonly PhotinoWindow _window;
         private readonly Dictionary<string,Func<JsonElement, Task>> _commandHandlers;
-
-        public MessageRouter(PhotinoWindow window,ClipRepository clipRepo,ClipboardMonitorService monitorService,FolderRepository folderRepo)
+        public MessageRouter(PhotinoWindow window,ClipRepository clipRepo,FolderRepository folderRepo,FolderManager folderManager,ClipboardMonitorService monitorService)
         {
             _window = window;
             var clipController = new ClipController(clipRepo, monitorService, SendToReact);
-            var folderController = new FolderController(folderRepo,clipRepo,SendToReact);
+            var folderController = new FolderController(folderRepo,clipRepo,folderManager,SendToReact);
             _commandHandlers = new Dictionary<string, Func<JsonElement, Task>>
             {
                 { "GET_ALL_CLIPS", clipController.GetAllClips },
@@ -25,7 +27,12 @@ namespace BackEnd.Services
                 { "MOVE_CLIP", clipController.MoveClip },
                 { "DELETE_FOLDER", folderController.DeleteFolder },
             };
-            monitorService.OnClipCopied += (newClip) => SendToReact("NEW_CLIP", newClip);
+            monitorService.OnClipboardChanged += (content, type, sourceApp) => 
+            {
+                var newClip = new ClipItem { Content = content, Type = type, SourceApp = sourceApp };
+                clipRepo.Insert(newClip);
+                SendToReact("NEW_CLIP", newClip);
+            };
         }
         public void RouteMessage(string rawJson)
         {

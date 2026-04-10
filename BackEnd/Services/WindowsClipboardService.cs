@@ -18,7 +18,7 @@ namespace BackEnd.Services
             RunOnStaThread(() => {
                 if (Clipboard.ContainsImage())
                 {
-                    using Image ?img = Clipboard.GetImage();
+                    using Image? img = Clipboard.GetImage();
                     if (img != null)
                     {
                         using var ms = new MemoryStream();

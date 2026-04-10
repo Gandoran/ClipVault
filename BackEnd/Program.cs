@@ -1,5 +1,8 @@
-﻿using Photino.NET;
+﻿using System;
+using System.Threading;
+using Photino.NET;
 using BackEnd.Services;
+using BackEnd.Repositories;
 
 namespace BackEnd
 {
@@ -17,10 +20,13 @@ namespace BackEnd
             var clipRepository = new ClipRepository(dbContext);
             var folderRepository = new FolderRepository(dbContext);
             var osClipboard = new WindowsClipboardService();
-            var clipboardMonitor = new ClipboardMonitorService(clipRepository, osClipboard);
-            var router = new MessageRouter(window, clipRepository, clipboardMonitor,folderRepository);
+            var activeWindowService = new WindowsClipboardService();
+            var folderManager = new FolderManager(folderRepository, clipRepository);
+            var clipboardMonitor = new ClipboardMonitorService(osClipboard);
+            var router = new MessageRouter(window, clipRepository, folderRepository, folderManager, clipboardMonitor);
             var cts = new CancellationTokenSource();
             _ = clipboardMonitor.StartMonitoringAsync(cts.Token);
+
             window.RegisterWebMessageReceivedHandler((object? sender, string message) =>
             {
                 router.RouteMessage(message);

@@ -1,6 +1,8 @@
 using System.Text.Json;
+using BackEnd.Repositories;
+using BackEnd.Services;
 
-namespace BackEnd.Services
+namespace BackEnd.Controllers
 {
     public class ClipController
     {

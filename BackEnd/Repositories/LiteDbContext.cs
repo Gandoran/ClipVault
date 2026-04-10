@@ -1,6 +1,6 @@
 using LiteDB;
 
-namespace BackEnd.Services
+namespace BackEnd.Repositories
 {
     public class LiteDbContext : IDisposable
     {
