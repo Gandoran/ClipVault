@@ -13,16 +13,26 @@ namespace BackEnd.Services
 
         public void Insert(ClipItem clip) => _collection.Insert(clip);
 
-        public IEnumerable<ClipItem> GetAll()
+        public IEnumerable<ClipItem> GetAll(string? folderId = null)
         {
-            return _collection.FindAll()
+            return _collection.Find(x => x.FolderId == folderId)
                               .OrderByDescending(x => x.IsPinned)
                               .ThenByDescending(x => x.CreatedAt)
                               .ToList();
         }
-
-        public void Delete(string id) => _collection.Delete(id);
-
+        public void MoveToFolder(string clipId,string? newFolderId)
+        {
+            var clip = _collection.FindById(clipId);
+            if (clip != null)
+            {
+                clip.FolderId = newFolderId;
+                _collection.Update(clip);
+            }
+        }
+        public void Delete(string id)
+        {
+            _collection.Delete(id);
+        }
         public void TogglePin(string id)
         {
             var clip = _collection.FindById(id);

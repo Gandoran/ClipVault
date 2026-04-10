@@ -8,21 +8,25 @@ namespace BackEnd.Services
         private readonly PhotinoWindow _window;
         private readonly Dictionary<string,Func<JsonElement, Task>> _commandHandlers;
 
-        public MessageRouter(PhotinoWindow window,ClipRepository dbService,ClipboardMonitorService monitorService)
+        public MessageRouter(PhotinoWindow window,ClipRepository clipRepo,ClipboardMonitorService monitorService,FolderRepository folderRepo)
         {
             _window = window;
-            var clipController = new ClipController(dbService, monitorService, SendToReact);
+            var clipController = new ClipController(clipRepo, monitorService, SendToReact);
+            var folderController = new FolderController(folderRepo,clipRepo,SendToReact);
             _commandHandlers = new Dictionary<string, Func<JsonElement, Task>>
             {
                 { "GET_ALL_CLIPS", clipController.GetAllClips },
                 { "DELETE_CLIP", clipController.DeleteClip },
                 { "COPY_CLIP", clipController.CopyClip },
                 { "TOGGLE_PIN", clipController.TogglePin },
-                { "UPDATE_CLIP_CONTENT", clipController.UpdateClipContent }
+                { "UPDATE_CLIP_CONTENT", clipController.UpdateClipContent },
+                { "GET_ALL_FOLDERS", folderController.GetAllFolders },
+                { "CREATE_FOLDER", folderController.CreateFolder },
+                { "MOVE_CLIP", clipController.MoveClip },
+                { "DELETE_FOLDER", folderController.DeleteFolder },
             };
             monitorService.OnClipCopied += (newClip) => SendToReact("NEW_CLIP", newClip);
         }
-
         public void RouteMessage(string rawJson)
         {
             Task.Run(async () =>

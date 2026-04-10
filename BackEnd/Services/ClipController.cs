@@ -29,7 +29,6 @@ namespace BackEnd.Services
         {
             var content = root.GetProperty("payload").GetProperty("content").GetString();
             var type = root.GetProperty("payload").GetProperty("type").GetString();
-            
             if (content != null && type != null) 
             {
                 _monitorService.CopyToClipboardSilently(content, type);
@@ -56,6 +55,14 @@ namespace BackEnd.Services
                 var content = updateData.GetProperty("content").GetString();
                 if (!string.IsNullOrEmpty(id) && content != null) _repository.UpdateContent(id, content);
             }
+            return Task.CompletedTask;
+        }
+        public Task MoveClip(JsonElement root) {
+            var payload = root.GetProperty("payload");
+            var clipId = payload.GetProperty("clipId").GetString();
+            var folderId = payload.GetProperty("folderId").GetString();
+            if(clipId != null) _repository.MoveToFolder(clipId, folderId);
+            _sendToReact("ALL_CLIPS_LOADED", _repository.GetAll(null)); 
             return Task.CompletedTask;
         }
     }

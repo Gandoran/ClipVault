@@ -7,6 +7,11 @@ export function ClipCard({ clip, onCopy, onDelete, onTogglePin, onUpdateContent,
   const [isHovered, setIsHovered] = useState(false);
   return (
     <div 
+    draggable="true"
+      onDragStart={(e) => {
+        e.dataTransfer.setData("clipId", clip.Id);
+        e.dataTransfer.effectAllowed = "move";
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{ 
