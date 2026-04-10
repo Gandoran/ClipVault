@@ -1,4 +1,5 @@
 using BackEnd.Controllers;
+using BackEnd.Managers;
 using BackEnd.Models;
 using BackEnd.Repositories;
 using Photino.NET;

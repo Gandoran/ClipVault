@@ -1,6 +1,6 @@
 using System.Text.Json;
+using BackEnd.Managers;
 using BackEnd.Repositories;
-using BackEnd.Services;
 
 namespace BackEnd.Controllers
 {
@@ -36,7 +36,6 @@ namespace BackEnd.Controllers
             {
                 _folderManager.DeleteFolderCascading(id);
                 _sendToReact("ALL_FOLDERS_LOADED", _folderRepo.GetAll());
-                _sendToReact("ALL_CLIPS_LOADED", _clipRepo.GetAll(null));
             }
             return Task.CompletedTask;
         }

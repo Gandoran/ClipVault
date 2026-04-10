@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading;
-using Photino.NET;
+﻿using Photino.NET;
 using BackEnd.Services;
 using BackEnd.Repositories;
+using BackEnd.Managers;
 
 namespace BackEnd
 {
@@ -26,7 +25,6 @@ namespace BackEnd
             var router = new MessageRouter(window, clipRepository, folderRepository, folderManager, clipboardMonitor);
             var cts = new CancellationTokenSource();
             _ = clipboardMonitor.StartMonitoringAsync(cts.Token);
-
             window.RegisterWebMessageReceivedHandler((object? sender, string message) =>
             {
                 router.RouteMessage(message);

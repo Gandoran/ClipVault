@@ -109,3 +109,14 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.reveal-on-hover {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.clip-card:hover .reveal-on-hover {
+  opacity: 1;
+  pointer-events: auto;
+}

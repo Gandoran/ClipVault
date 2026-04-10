@@ -9,12 +9,11 @@ export function useAppManager() {
     if (routeToClips) routeToClips(parsedData);
     if (routeToFolders) routeToFolders(parsedData);
   });
-  const { clips, processIncomingClip, clipActions } = useClips(sendCommand);
   const { folders, selectedFolderId, processIncomingFolder, folderActions } = useFolders(sendCommand);
+  const { clips, processIncomingClip, clipActions } = useClips(sendCommand,selectedFolderId);
   routeToClips = processIncomingClip;
   routeToFolders = processIncomingFolder;
   useEffect(() => {
-    sendCommand("GET_ALL_CLIPS", null);
     sendCommand("GET_ALL_FOLDERS", null);
   }, [sendCommand]);
   return {

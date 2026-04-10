@@ -1,6 +1,6 @@
 using BackEnd.Repositories;
 
-namespace BackEnd.Services
+namespace BackEnd.Managers
 {
     public class FolderManager
     {

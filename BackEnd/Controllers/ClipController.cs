@@ -17,7 +17,9 @@ namespace BackEnd.Controllers
         }
         public Task GetAllClips(JsonElement root)
         {
-            var allClips = _repository.GetAll();
+            string? folderId = null; 
+            if (root.TryGetProperty("payload", out var payload) && payload.ValueKind == JsonValueKind.String) folderId = payload.GetString();
+            var allClips = _repository.GetAll(folderId);
             _sendToReact("ALL_CLIPS_LOADED", allClips);
             return Task.CompletedTask;
         }
@@ -31,10 +33,7 @@ namespace BackEnd.Controllers
         {
             var content = root.GetProperty("payload").GetProperty("content").GetString();
             var type = root.GetProperty("payload").GetProperty("type").GetString();
-            if (content != null && type != null) 
-            {
-                _monitorService.CopyToClipboardSilently(content, type);
-            }
+            if (content != null && type != null) _monitorService.CopyToClipboardSilently(content, type);
             return Task.CompletedTask;
         }
         public Task TogglePin(JsonElement root)
@@ -64,7 +63,6 @@ namespace BackEnd.Controllers
             var clipId = payload.GetProperty("clipId").GetString();
             var folderId = payload.GetProperty("folderId").GetString();
             if(clipId != null) _repository.MoveToFolder(clipId, folderId);
-            _sendToReact("ALL_CLIPS_LOADED", _repository.GetAll(null)); 
             return Task.CompletedTask;
         }
     }

@@ -20,9 +20,9 @@ function App() {
       </h2>
       <FolderBar folders={state.folders} selectedFolderId={state.selectedFolderId} onCreateFolder={folderActions.create} onDeleteFolder={folderActions.delete} onSelectFolder={folderActions.select} onDropClip={clipActions.moveToFolder}/>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-        <AnimatePresence>
-          {filteredClips.map((clip) => (
-            <motion.div key={clip.Id} layout initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ duration: 0.1 }}>
+        <AnimatePresence mode="popLayout">
+          {state.clips.map((clip) => (
+            <motion.div key={clip.Id} layout initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ type: "tween", duration: 0.5, ease: "easeInOut" }}>
               <ClipCard clip={clip} onCopy={clipActions.copy} onDelete={clipActions.delete} onTogglePin={clipActions.togglePin} onUpdateContent={clipActions.updateContent} onExpand={(clip) => setSelectedClip(clip)}/>
             </motion.div>
           ))}

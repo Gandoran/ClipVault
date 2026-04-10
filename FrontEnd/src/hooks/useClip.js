@@ -1,13 +1,18 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
-export function useClips(sendCommand) {
+export function useClips(sendCommand,selectedFolderId) {
   const [clips, setClips] = useState([]);
   const processIncomingClip = useCallback((parsedData) => {
     if (parsedData.type === 'ALL_CLIPS_LOADED') setClips(parsedData.data);
-    else if (parsedData.type === 'NEW_CLIP') setClips((prev) => [parsedData.data, ...prev]);
-  }, []);
+    else if (parsedData.type === 'NEW_CLIP') if (selectedFolderId === null) setClips((prev) => [parsedData.data, ...prev]);
+  }, [selectedFolderId]);
+  useEffect(() => {
+    sendCommand("GET_ALL_CLIPS", selectedFolderId);
+  }, [selectedFolderId, sendCommand]);
   const clipActions = {
-    copy: (content, type = "Text") => sendCommand("COPY_CLIP", { content, type }),
+    copy: (content, type = "Text") => {
+      sendCommand("COPY_CLIP", { content, type });
+    },
     delete: (id) => {
       sendCommand("DELETE_CLIP", id);
       setClips((prev) => prev.filter(clip => clip.Id !== id));
@@ -17,7 +22,10 @@ export function useClips(sendCommand) {
       setClips((prev) => prev.map(clip => clip.Id === id ? { ...clip, Content: newContent } : clip));
       sendCommand("UPDATE_CLIP_CONTENT", { id, content: newContent });
     },
-    moveToFolder: (clipId, folderId) => sendCommand("MOVE_CLIP", { clipId, folderId })
+    moveToFolder: (clipId, folderId) => {
+      sendCommand("MOVE_CLIP", { clipId, folderId });
+      setClips((prev) => prev.filter(clip => clip.Id !== clipId));
+    }
   };
   return { clips, processIncomingClip, clipActions };
 }
