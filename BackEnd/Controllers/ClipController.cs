@@ -47,7 +47,6 @@ namespace BackEnd.Controllers
             }
             return Task.CompletedTask;
         }
-
         public Task UpdateClipContent(JsonElement root)
         {
             if (root.TryGetProperty("payload", out var updateData))
@@ -63,6 +62,15 @@ namespace BackEnd.Controllers
             var clipId = payload.GetProperty("clipId").GetString();
             var folderId = payload.GetProperty("folderId").GetString();
             if(clipId != null) _repository.MoveToFolder(clipId, folderId);
+            return Task.CompletedTask;
+        }
+        public Task MultipleDelete(JsonElement root)
+        {
+            if(root.TryGetProperty("payload",out var payload)&& payload.ValueKind == JsonValueKind.Array)
+            {
+                var id = payload.EnumerateArray().Select(x=>x.GetString()).Where(x=>x!=null).ToList();
+                if(id.Any()) _repository.MultipleDelete(id!);
+            }
             return Task.CompletedTask;
         }
     }

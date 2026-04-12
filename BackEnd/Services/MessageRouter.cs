@@ -27,6 +27,7 @@ namespace BackEnd.Services
                 { "CREATE_FOLDER", folderController.CreateFolder },
                 { "MOVE_CLIP", clipController.MoveClip },
                 { "DELETE_FOLDER", folderController.DeleteFolder },
+                { "MULTIPLE_CLIPS_DELETE" ,clipController.MultipleDelete},
             };
             monitorService.OnClipboardChanged += (content, type, sourceApp) => 
             {

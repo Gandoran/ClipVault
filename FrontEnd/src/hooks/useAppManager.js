@@ -10,14 +10,14 @@ export function useAppManager() {
     if (routeToFolders) routeToFolders(parsedData);
   });
   const { folders, selectedFolderId, processIncomingFolder, folderActions } = useFolders(sendCommand);
-  const { clips, processIncomingClip, clipActions } = useClips(sendCommand,selectedFolderId);
+  const { clips, isSelectionMode, selectedIds, processIncomingClip, clipActions } = useClips(sendCommand,selectedFolderId);
   routeToClips = processIncomingClip;
   routeToFolders = processIncomingFolder;
   useEffect(() => {
     sendCommand("GET_ALL_FOLDERS", null);
   }, [sendCommand]);
   return {
-    state: { clips, folders, selectedFolderId },
+    state: { clips, folders, selectedFolderId, isSelectionMode, selectedIds },
     clipActions,
     folderActions
   };

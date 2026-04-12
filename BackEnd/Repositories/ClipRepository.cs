@@ -42,7 +42,6 @@ namespace BackEnd.Repositories
                 _collection.Update(clip);
             }
         }
-
         public void UpdateContent(string id, string newContent)
         {
             var clip = _collection.FindById(id);
@@ -51,6 +50,10 @@ namespace BackEnd.Repositories
                 clip.Content = newContent;
                 _collection.Update(clip);
             }
+        }
+        public void MultipleDelete(IEnumerable<string> id)
+        {
+            _collection.DeleteMany(x => id.Contains(x.Id));
         }
     }
 }

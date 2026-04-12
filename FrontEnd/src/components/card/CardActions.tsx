@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 
-export function CardActions ({ clip, isHovered, onCopy, onDelete, onExpand }:any) {
+export function CardActions ({ clip, onCopy, onDelete, onExpand, isSelectionMode }:any) {
+  if (isSelectionMode) return <div style={{ height: '18px', marginTop: '5px' }}></div>; 
   return (
   <div className="reveal-on-hover" style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', marginTop: '5px' }}>
     <button onClick={() => onExpand(clip)} style={{ background: 'transparent', color: '#4caf50', border: 'none', cursor: 'pointer', fontSize: '13px', padding: 0 }}>🔍 Espandi</button>
