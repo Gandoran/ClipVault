@@ -120,3 +120,12 @@ code {
   opacity: 1;
   pointer-events: auto;
 }
+
+.faded-pin {
+  opacity: 0c;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.clip-card:hover .faded-pin {
+  opacity: 1;
+}
