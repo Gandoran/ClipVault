@@ -72,6 +72,12 @@ Il frontend è basato su React con Vite come build tool. Le tecnologie principal
 - **useClip**, **useFolder**: Hook utilizzati dai componenti per interagire con i dati degli appunti e delle cartelle.
 - **useIPC**: Hook per la comunicazione tra il frontend e il backend.
 
+#### 📝 Application Example
+<p align="center">
+<img width="400" height="800" alt="Screenshot 2026-04-13 234553" src="https://github.com/user-attachments/assets/7cc72ed4-d77b-44d0-9b43-e77bf3667e34" />
+</p>
+
+
 ## 💻 Installazione e Avvio
 Per installare ClipVault, eseguire i seguenti comandi:
 ```bash
