@@ -11,7 +11,7 @@ namespace BackEnd.Services
     {
         private readonly PhotinoWindow _window;
         private readonly Dictionary<string,Func<JsonElement, Task>> _commandHandlers;
-        public MessageRouter(PhotinoWindow window,ClipRepository clipRepo,FolderRepository folderRepo,FolderManager folderManager,ClipboardMonitorService monitorService)
+        public MessageRouter(PhotinoWindow window,ClipRepository clipRepo,FolderRepository folderRepo,FolderManager folderManager,ClipboardMonitorService monitorService,TagAnalyzerService tagAnalyzerService)
         {
             _window = window;
             var clipController = new ClipController(clipRepo, monitorService, SendToReact);
@@ -31,7 +31,8 @@ namespace BackEnd.Services
             };
             monitorService.OnClipboardChanged += (content, type, sourceApp) => 
             {
-                var newClip = new ClipItem { Content = content, Type = type, SourceApp = sourceApp };
+                var tags = tagAnalyzerService.Analyze(content, type, sourceApp);
+                var newClip = new ClipItem { Content = content, Type = type, SourceApp = sourceApp, Tags=tags };
                 clipRepo.Insert(newClip);
                 SendToReact("NEW_CLIP", newClip);
             };

@@ -2,6 +2,7 @@
 using BackEnd.Services;
 using BackEnd.Repositories;
 using BackEnd.Managers;
+using BackEnd.TagRules;
 
 namespace BackEnd
 {
@@ -21,11 +22,13 @@ namespace BackEnd
             var osClipboard = new WindowsClipboardService();
             var activeWindowService = new WindowsClipboardService();
             var folderManager = new FolderManager(folderRepository, clipRepository);
+            var tagRules = new List<ITagRule> {new ImageRule(), new CodeRule(), new PasswordRule(), new LinkRule(), new EmailRule()};
+            var tagAnalyzer = new TagAnalyzerService(tagRules);
             var clipboardMonitor = new ClipboardMonitorService(osClipboard);
-            var router = new MessageRouter(window, clipRepository, folderRepository, folderManager, clipboardMonitor);
+            var router = new MessageRouter(window, clipRepository, folderRepository, folderManager, clipboardMonitor, tagAnalyzer);
             var cts = new CancellationTokenSource();
             _ = clipboardMonitor.StartMonitoringAsync(cts.Token);
-            window.RegisterWebMessageReceivedHandler((object? sender, string message) =>
+            window.RegisterWebMessageReceivedHandler((object? sender, string message) =>    
             {
                 router.RouteMessage(message);
             });
