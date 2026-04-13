@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ClipContentRenderer } from "../ClipContentRenderer";
 
 export function CardEditor ({ clip, onUpdateContent }:any) {
   const [isEditing, setIsEditing] = useState(false);
@@ -32,8 +33,8 @@ export function CardEditor ({ clip, onUpdateContent }:any) {
             fontFamily: 'inherit', fontSize: '14px', minHeight: '60px', resize: 'vertical'
           }}/>
       ) : (
-        <div style={{ fontSize: '14px', whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: '#e0e0e0', cursor: 'text' }}>
-          {clip.Content.length > 300 ? clip.Content.substring(0, 300) + '...' : clip.Content}
+        <div style={{ padding: '5px 0'}}>
+          <ClipContentRenderer clip={clip} isModal={false}/>
         </div>
       )}
     </div>

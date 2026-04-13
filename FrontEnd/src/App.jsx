@@ -24,6 +24,10 @@ function App() {
   const displayedClips = clips.filter(clip => {
     if(!searchQuery) return true;
     const query = searchQuery.toLowerCase();
+    if (query.startsWith('#')) {
+      const searchTag = query.slice(1); 
+      return clip.Tags && clip.Tags.some(tag => tag.toLowerCase().includes(searchTag));
+    }
     const matchContent = clip.Content?.toLowerCase().includes(query);
     const matchApp = clip.SourceApp?.toLowerCase().includes(query);
     return matchContent || matchApp;
