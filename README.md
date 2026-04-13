@@ -1,125 +1,123 @@
 # ClipVault
 
 ## 📖 Descrizione Dettagliata
-
-ClipVault è un software di gestione di clipboard personalizzata progettato per aiutare gli utenti a salvare, recuperare e organizzare le loro selezioni di testo. Il software monitora il clipboard dell'utente in tempo reale, consentendo agli utenti di salvare i contenuti copiati in un database locale e di accedervi da qualsiasi dispositivo.
-
-ClipVault è particolarmente utile per professionisti che lavorano con informazioni importanti o sensibili, fornendo una soluzione semplice ma efficace per la conservazione temporanea delle selezioni di testo. Il software offre funzionalità avanzate come l'archiviazione dei contenuti in formato richiesto, l'abilità di aggiungere etichette e categorie ai clip copiati, e la possibilità di controllare se un determinato clip è stato salvato o meno.
+ClipVault è un software di gestione di appunti e tagli, progettato per facilitare la memorizzazione e l'accesso rapido a informazioni importanti. Il sistema integra funzionalità come il monitoraggio della clipboard, l'identificazione automatica di contenuti specifici (come email, link, codici sorgente), e una struttura organizzativa delle appunti in cartelle.
 
 ## 🚀 Funzionalità Principali
+ClipVault offre le seguenti funzionalità principali:
 
-1. **Monitoraggio del Clipboard**: ClipVault monitora in tempo reale le selezioni di testo dall'clipboard dell'utente.
-2. **Archiviazione dei Clip**: I contenuti copiati vengono salvati in un database locale, offrendo la possibilità di accedervi da qualsiasi dispositivo.
-3. **Visualizzazione e Gestione dei Clip**: Gli utenti possono visualizzare tutti i clip salvati, modificare il loro contenuto o eliminarli quando non sono più necessari.
-4. **Pinning dei Clip**: Gli utenti possono "pin" determinati clip per accedervi in modo rapido e senza dover cercarli nel database.
-5. **Categorie e Etichette**: I clip possono essere organizzati in categorie e etichettati per facilitare la ricerca.
-6. **Sincronizzazione tra Dispositivi (TODO)**: ClipVault è progettato per supportare la sincronizzazione dei dati tra diversi dispositivi, consentendo agli utenti di accedere ai loro clip da qualsiasi dispositivo con connessione Internet.
+- **Monitoraggio della clipboard**: ClipVault monitora costantemente la clipboard e registra automaticamente i contenuti. Questo include testi, immagini e dati binari.
+  
+- **Identificazione automatizzata di contenuti**: I contenuti vengono analizzati per rilevare tipi specifici (come email, link web, codici sorgente). Ogni tipo viene etichettato automaticamente.
+
+- **Gestione appunti in cartelle**: Gli appunti possono essere organizzati in diverse cartelle. Ciò facilita la ricerca e l'accesso ai contenuti.
+
+- **Funzionalità di ricerca**: Permette di cercare appunti tramite testo o etichette.
+
+- **Selezione multipla e azioni**: È possibile selezionare più appunti contemporaneamente per operazioni come copia, eliminazione, aggiunta a cartelle diverse e altre azioni personalizzate.
 
 ## 🛠️ Architettura e Tecnologie
-
-ClipVault è diviso in due moduli principali: un backend (.NET) e un frontend (React). Entrambi i moduli comunicano attraverso una API IPC (Inter-Process Communication).
+ClipVault è strutturato in due principali componenti: il backend e il frontend.
 
 ### Backend (.NET)
-
-Il backend di ClipVault è scritto in C# utilizzando .NET 10.0 Windows Forms. Utilizza la libreria LiteDB per gestire il database locale e Photino.NET per creare un'applicazione desktop.
-
-Le principali classi del backend includono:
-
-- **ClipItem**: rappresenta un singolo clip copiato.
-- **ClipboardMonitorService**: monitora in tempo reale le selezioni di testo e salva i clip nel database.
-- **ClipController**: fornisce metodi per gestire i clip, come la copia, l'eliminazione, il salvataggio e la modifica del contenuto.
-- **ClipRepository**: gestisce l'accesso al database LiteDB, offrendo funzionalità per inserire, recuperare, modificare e eliminare i clip.
-- **IOsClipboardService**: definisce un'interfaccia per le operazioni di clipboard.
-- **LiteDbContext**: gestisce la connessione al database LiteDB.
-- **MessageRouter**: gestisce il routing dei messaggi tra il backend e il frontend.
+Il backend utilizza .NET Framework 10.0 e Windows Forms per interagire con la clipboard e gestire i dati dell'applicazione. Le tecnologie principali includono:
+- **LiteDB**: Un database NoSQL leggero usato per memorizzare appunti e cartelle.
+- **Photino.NET**: Una libreria per creare applicazioni desktop in .NET che possono anche essere distribuite come bundle di browser.
+- **TextCopy**: Per l'accesso alla clipboard.
 
 ### Frontend (React)
-
-Il frontend di ClipVault è implementato in React, utilizzando Vite come ambiente di sviluppo. Utilizza Framer Motion per le animazioni e React Toastify per i notifiche.
-
-Le principali componenti del frontend includono:
-
-- **App.jsx**: componente principale dell'applicazione, che gestisce lo stato dei clip e renderizza la lista dei clip.
-- **ClipCard.tsx**: componente che rappresenta un singolo clip nel feed.
-- **ClipModal.tsx**: componente che consente agli utenti di visualizzare e modificare il contenuto di un clip.
-- **hooks/useClipManager.js**: hook personalizzato per gestire lo stato dei clip.
-- **hooks/useIpc.js**: hook personalizzato per la comunicazione tra il frontend e il backend.
+Il frontend è basato su React con Vite come build tool. Le tecnologie principali sono:
+- **React**: Framework per la creazione dell'interfaccia utente.
+- **Framer Motion**: Libreria per animazioni fluide.
+- **react-syntax-highlighter**: Per evidenziare il codice sorgente.
+- **react-toastify**: Per notifiche di sistema.
 
 ## 🧩 Moduli e Componenti Core
-
 ### Backend (.NET)
+#### Controllers
+- **ClipController**: Gestisce operazioni CRUD per i clip, come la creazione, eliminazione e aggiornamento.
+- **FolderController**: Gestisce le operazioni CRUD per le cartelle, inclusa l'eliminazione cascading.
 
-1. **ClipItem**: Questa classe rappresenta un singolo clip copiato, con proprietà come `Id`, `Content`, `Type`, `SourceApp`, `IsPinned` e `Tags`.
+#### Managers
+- **FolderManager**: Gestisce l'eliminazione delle cartelle in cascata, rimuovendo tutti i clip associati.
 
-2. **ClipboardMonitorService**: Questa classe si occupa del monitoraggio delle selezioni di testo dall'clipboard dell'utente. Inizia a monitorare gli eventi del clipboard quando viene avviato il servizio, e aggiunge i nuovi clip al database utilizzando la classe `ClipRepository`.
+#### Models
+- **ClipItem**: Definisce lo schema per un appunto.
+- **FolderItem**: Definisce lo schema per una cartella.
 
-3. **ClipController**: Questa classe fornisce metodi per gestire i clip, come la copia, l'eliminazione, il salvataggio e la modifica del contenuto. Utilizza la classe `ClipRepository` per accedere al database e la classe `ClipboardMonitorService` per monitorare gli eventi del clipboard.
+#### Repositories
+- **ClipRepository**: Interfaccia con il database per operazioni CRUD sui clip.
+- **FolderRepository**: Interfaccia con il database per operazioni CRUD sulle cartelle.
+- **LiteDbContext**: Contesto del database LiteDB.
 
-4. **ClipRepository**: Questa classe gestisce l'accesso al database LiteDB, offrendo funzionalità per inserire, recuperare, modificare e eliminare i clip.
+#### Services
+- **ClipboardMonitorService**: Monitora la clipboard e invia notifiche al frontend.
+- **IOsClipboardService**: Interfaccia astratta per l'accesso alla clipboard.
+- **MessageRouter**: Rotta messaggi tra il backend e il frontend.
+- **TagAnalyzerService**: Analizza contenuti per etichettarli automaticamente.
 
-5. **IOsClipboardService**: Questa interfaccia definisce un'interfaccia per le operazioni di clipboard, utilizzata dalle classi specifiche del sistema operativo (es. `WindowsClipboardService`).
-
-6. **LiteDbContext**: Questa classe gestisce la connessione al database LiteDB.
-
-7. **MessageRouter**: Questa classe gestisce il routing dei messaggi tra il backend e il frontend, utilizzando Photino.NET per comunicare attraverso una API IPC.
+#### TagRules
+- **CodeRule**, **EmailRule**, **ImageRule**, **LinkRule**, **PasswordRule**: Implementano regole di rilevamento per specifici tipi di contenuti.
 
 ### Frontend (React)
+#### Components
+- **ClipCard**: Visualizza un singolo appunto.
+- **ClipModal**: Mostra il dettaglio di un appunto.
+- **FolderBar**: Barra delle cartelle, permette la creazione e selezione delle cartelle.
+- **AppHeader**: Intestazione dell'applicazione con bottoni di ricerca e selezione multipla.
+- **CommandPalette**: Per ricerca degli appunti per tag o testo.
 
-1. **ClipCard.tsx**: Questo componente rappresenta un singolo clip nel feed. Mostra il contenuto del clip e fornisce pulsanti per la copia, l'eliminazione e la modifica del contenuto.
-
-2. **ClipModal.tsx**: Questo componente consente agli utenti di visualizzare e modificare il contenuto di un clip. Utilizza i componenti `CardHeader`, `CardEditor` e `CardActions`.
-
-3. **hooks/useClipManager.js**: Questo hook personalizzato gestisce lo stato dei clip, recuperando i dati dal backend attraverso la comunicazione IPC.
-
-4. **hooks/useIpc.js**: Questo hook personalizzato gestisce la comunicazione tra il frontend e il backend, utilizzando la libreria React IpcRenderer per ricevere messaggi dal backend.
+#### Hooks
+- **useAppManager**: Hook personalizzato per gestire lo stato globale dell'applicazione.
+- **useClip**, **useFolder**: Hook utilizzati dai componenti per interagire con i dati degli appunti e delle cartelle.
+- **useIPC**: Hook per la comunicazione tra il frontend e il backend.
 
 ## 💻 Installazione e Avvio
+Per installare ClipVault, eseguire i seguenti comandi:
+```bash
+cd BackEnd
+dotnet restore
+dotnet build
 
-### Backend (.NET)
+cd ../FrontEnd
+npm install
+npm run dev
+```
 
-1. Apri una finestra del terminale.
-2. Naviga alla directory del progetto backend (`BackEnd`).
-3. Esegui il comando di installazione delle dipendenze:
-   ```sh
-   dotnet restore
-   ```
-4. Esegui il progetto:
-   ```sh
-   dotnet run
-   ```
+Questo avvierà l'ambiente di sviluppo del frontend. Per il backend, aprire ClipVault.sln in Visual Studio e eseguire il progetto.
 
-### Frontend (React)
-
-1. Apri una finestra del terminale.
-2. Naviga alla directory del progetto frontend (`FrontEnd`).
-3. Installa le dipendenze npm:
-   ```sh
-   npm install
-   ```
-4. Avvia l'applicazione di sviluppo:
-   ```sh
-   npm run dev
-   ```
-
-### Nota
-
-ClipVault è ancora in fase di sviluppo e alcune funzionalità, come la sincronizzazione tra dispositivi, sono attualmente in corso di implementazione.
+**Nota:** Assicurarsi che tutte le dipendenze richieste siano state installate e configurate correttamente.
 
 ## Project Structure:
 ```text
 ClipVault/
 ├── BackEnd
+│   ├── Controllers
+│   │   ├── ClipController.cs
+│   │   └── FolderController.cs
+│   ├── Managers
+│   │   └── FolderManager.cs
 │   ├── Models
-│   │   └── ClipItem.cs
+│   │   ├── ClipItem.cs
+│   │   └── FolderItem.cs
+│   ├── Repositories
+│   │   ├── ClipRepository.cs
+│   │   ├── FolderRepository.cs
+│   │   └── LiteDbContext.cs
 │   ├── Services
 │   │   ├── ClipBoardMonitorService.cs
-│   │   ├── ClipController.cs
-│   │   ├── ClipRepository.cs
 │   │   ├── IOsClipboardService.cs
-│   │   ├── LiteDbContext.cs
 │   │   ├── MessageRouter.cs
+│   │   ├── TagAnalyzer.cs
 │   │   ├── WindowTracker.cs
 │   │   └── WindowsClipboardService.cs
+│   ├── TagRules
+│   │   ├── CodeRule.cs
+│   │   ├── EmailRule.cs
+│   │   ├── ITagRule.cs
+│   │   ├── ImageRule.cs
+│   │   ├── LinkRule.cs
+│   │   └── PasswordRule.cs
 │   ├── data
 │   ├── Backend.csproj
 │   └── Program.cs
@@ -128,17 +126,31 @@ ClipVault/
 │   ├── src
 │   │   ├── assets
 │   │   ├── components
-│   │   │   ├── card
-│   │   │   │   ├── CardActions.tsx
-│   │   │   │   ├── CardEditor.tsx
-│   │   │   │   └── CardHeadert.tsx
-│   │   │   ├── modal
-│   │   │   │   ├── ModalBody.tsx
-│   │   │   │   └── ModalHeader.tsx
-│   │   │   ├── ClipCard.tsx
-│   │   │   └── ClipModal.tsx
+│   │   │   ├── clip
+│   │   │   │   ├── card
+│   │   │   │   │   ├── CardActions.tsx
+│   │   │   │   │   ├── CardEditor.tsx
+│   │   │   │   │   └── CardHeadert.tsx
+│   │   │   │   ├── modal
+│   │   │   │   │   ├── ModalBody.tsx
+│   │   │   │   │   └── ModalHeader.tsx
+│   │   │   │   ├── ClipCard.tsx
+│   │   │   │   ├── ClipContentRenderer.tsx
+│   │   │   │   ├── ClipList.tsx
+│   │   │   │   └── ClipModal.tsx
+│   │   │   ├── folder
+│   │   │   │   ├── FolderCreator.tsx
+│   │   │   │   └── FolderItem.tsx
+│   │   │   ├── AppHeader.tsx
+│   │   │   ├── CommandPalette.jsx
+│   │   │   ├── DeleteButton.tsx
+│   │   │   ├── FolderBar.jsx
+│   │   │   ├── SearchBar.tsx
+│   │   │   └── index.js
 │   │   ├── hooks
-│   │   │   ├── useClipManager.js
+│   │   │   ├── useAppManager.js
+│   │   │   ├── useClip.js
+│   │   │   ├── useFolder.js
 │   │   │   └── useIpc.js
 │   │   ├── App.jsx
 │   │   └── main.jsx

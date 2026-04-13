@@ -13,6 +13,7 @@ namespace BackEnd
         {
             var window = new PhotinoWindow()
                 .SetTitle("ClipVault")
+                .SetIconFile("icon.ico")
                 .SetUseOsDefaultSize(false)
                 .SetSize(400, 500)
                 .Center();

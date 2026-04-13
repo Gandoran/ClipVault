@@ -22,8 +22,9 @@ export function CardHeader({ clip, onTogglePin, isSelectionMode }: any) {
           </span>
         )}
       </div>
-      <button onClick={() => onTogglePin(clip.Id)} className={clip.IsPinned ? "" : "faded-pin"} style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '14px',visibility: isSelectionMode ? 'hidden' : 'visible'}} title={clip.IsPinned ? "Rimuovi dalla cima" : "Fissa in cima"}> 
-        📌
+      <button onClick={() => onTogglePin(clip.Id)} onMouseEnter={(e) => e.currentTarget.style.opacity = '1'} onMouseLeave={(e) => e.currentTarget.style.opacity = clip.IsPinned ? '1' : '0.3'} title={clip.IsPinned ? "Rimuovi dalla cima" : "Fissa in cima"}
+        style={{ background: 'transparent',  border: 'none',  cursor: 'pointer', fontSize: '14px', visibility: isSelectionMode ? 'hidden' : 'visible', opacity: clip.IsPinned ? 1 : 0.1, transition: 'opacity 0.2s ease' }} >
+          📌
       </button>
     </div>
   );
